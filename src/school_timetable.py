@@ -1,11 +1,11 @@
 import datetime
 
-from Calendar import Calendar
-from Event import Event
+from src.calendar import Calendar
+from src.event import Event
 
 
 class SchoolTimeTable:
-    def __init__(self, start_date, weeks=18, class_info_path='class_info.txt'):
+    def __init__(self, start_date, weeks=18, class_info_path='resource/class_info.txt'):
         self.start_date = start_date
         self.cur_week = 1
         self.weeks = weeks
@@ -53,7 +53,7 @@ class SchoolTimeTable:
                 if (clazz_event is not None):
                     cal.add_event(clazz_event)
             self.cur_week += 1
-        file = open("课程表.ics", "w")
+        file = open("../课程表.ics", "w")
         file.write(cal.format())
         file.close()
 
