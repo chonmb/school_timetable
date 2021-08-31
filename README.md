@@ -2,7 +2,7 @@
 
 ## 使用方法
 
-将课程表格输入到`class_info.txt`文件下
+将课程表格输入到`resource/class_info.txt`文件下
 > 课程信息格式为：  
 > {class_name}，{class_info}；  
 > 示例如下：
