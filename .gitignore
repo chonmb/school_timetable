@@ -1,0 +1,10 @@
+###ide###
+.idea
+venv
+__pycache__
+
+###Mac###
+.DS_Store
+
+###out###
+课程表.ics
