@@ -1,16 +1,15 @@
 import datetime
-import uuid
 
 
 class Event:
     def __init__(self, summary, location, start, end, description=""):
-        self.uid = uuid.uuid4()
         self.stamp = datetime.datetime.now()
         self.summary = summary
         self.location = location
         self.start = start
         self.end = end
         self.description = description
+        self.uid = self.get_uid()
         self.template = """BEGIN:VEVENT
 DTSTAMP:{stamp}
 UID:{uid}
@@ -28,3 +27,6 @@ END:VEVENT"""
                                     summary=self.summary, location=self.location,
                                     start=self.start.strftime("%Y%m%dT%H%M%S"),
                                     end=self.end.strftime("%Y%m%dT%H%M%S"), description=self.description)
+
+    def get_uid(self):
+        return hash(self.start.strftime("%Y%m%d") + self.summary)

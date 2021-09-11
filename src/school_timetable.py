@@ -5,11 +5,14 @@ from src.event import Event
 
 
 class SchoolTimeTable:
-    def __init__(self, start_date, weeks=18, class_info_path='resource/class_info.txt'):
+    def __init__(self, start_date, weeks=18, class_info_path='resource/class_info.txt',
+                 day_exchange_path="resource/day_exchange.txt", out="release/2021-A-秋.ics"):
         self.start_date = start_date
         self.cur_week = 1
         self.weeks = weeks
         self.class_info_path = class_info_path
+        self.day_exchange_path = day_exchange_path
+        self.out = out
         self.clazz = self.__read_clazz()
         self.time_map = {
             1: {'start': [8, 0], 'end': [8, 45]},
@@ -36,12 +39,14 @@ class SchoolTimeTable:
             '二': 1,
             '一': 0
         }
+        self.exchange_day_map = self.__get_exchange_day_map()
 
     def __read_clazz(self):
         file = open(self.class_info_path)
         clazz_list = []
         for info in file.readlines():
             clazz_list.append(info)
+        file.close()
         return clazz_list
 
     def gen_calendar(self):
@@ -53,7 +58,7 @@ class SchoolTimeTable:
                 if (clazz_event is not None):
                     cal.add_event(clazz_event)
             self.cur_week += 1
-        file = open("../课程表.ics", "w")
+        file = open(self.out, "w")
         file.write(cal.format())
         file.close()
 
@@ -70,12 +75,31 @@ class SchoolTimeTable:
             end = date + datetime.timedelta(
                 hours=self.time_map[end_class_count]['end'][0],
                 minutes=self.time_map[end_class_count]['end'][1])
-            e = Event(infos[0], "-".join(infos[-2:]), start, end, description=clazz_info)
+            e = Event(infos[0], "-".join(infos[-2:]), self.convert_real_day(start), self.convert_real_day(end),
+                      description=clazz_info)
             return e
         return None
 
     def check_week(self, week_range):
-
         start = eval(week_range.split("-")[0])
         end = eval(week_range.split("-")[1][:-1])
         return start <= self.cur_week <= end
+
+    def __get_exchange_day_map(self):
+        exchange_file = open(self.day_exchange_path)
+        exchange_map = {}
+        for ei in exchange_file:
+            (exchange_before, exchange_after) = ei.split("->")
+            exchange_map[exchange_before] = exchange_after
+        exchange_file.close()
+        return exchange_map
+
+    def convert_real_day(self, date):
+        if self.exchange_day_map.get(date.strftime("%Y%m%d")) is not None:
+            date_str = self.exchange_day_map.get(date.strftime("%Y%m%d"))
+            year = int(date_str[:4])
+            month = int(date_str[5:6])
+            day = int(date_str[-2:])
+            return date.replace(year=year, month=month, day=day)
+        else:
+            return date
