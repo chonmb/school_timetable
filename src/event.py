@@ -1,4 +1,5 @@
 import datetime
+import hashlib
 
 
 class Event:
@@ -29,4 +30,5 @@ END:VEVENT"""
                                     end=self.end.strftime("%Y%m%dT%H%M%S"), description=self.description)
 
     def get_uid(self):
-        return hash(self.start.strftime("%Y%m%d") + self.summary)
+        str = self.start.strftime("%Y%m%d") + self.summary
+        return hashlib.md5(str.encode(encoding='utf-8')).hexdigest()
