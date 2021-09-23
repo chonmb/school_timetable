@@ -75,7 +75,11 @@ class SchoolTimeTable:
             end = date + datetime.timedelta(
                 hours=self.time_map[end_class_count]['end'][0],
                 minutes=self.time_map[end_class_count]['end'][1])
-            e = Event(infos[0], "-".join(infos[-2:]), self.convert_real_day(start), self.convert_real_day(end),
+            real_start = self.convert_real_day(start)
+            real_end = self.convert_real_day(end)
+            if real_start is None or real_end is None:
+                return None
+            e = Event(infos[0], "-".join(infos[-2:]), real_start, real_end,
                       description=clazz_info)
             return e
         return None
@@ -97,6 +101,8 @@ class SchoolTimeTable:
     def convert_real_day(self, date):
         if self.exchange_day_map.get(date.strftime("%Y%m%d")) is not None:
             date_str = self.exchange_day_map.get(date.strftime("%Y%m%d"))
+            if date_str == "pass\n" or date_str == "pass":
+                return None
             year = int(date_str[:4])
             month = int(date_str[4:6])
             day = int(date_str[6:])
