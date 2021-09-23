@@ -98,8 +98,8 @@ class SchoolTimeTable:
         if self.exchange_day_map.get(date.strftime("%Y%m%d")) is not None:
             date_str = self.exchange_day_map.get(date.strftime("%Y%m%d"))
             year = int(date_str[:4])
-            month = int(date_str[5:6])
-            day = int(date_str[-2:])
+            month = int(date_str[4:6])
+            day = int(date_str[6:])
             return date.replace(year=year, month=month, day=day)
         else:
             return date
